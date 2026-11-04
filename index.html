@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기말고사 내신 대비 매니저</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#0f172a',
+                            950: '#0b0f19'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Noto Sans KR Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        
+        /* 인쇄 시 레이아웃 스타일 */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: white !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            .print-container {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            table {
+                border-collapse: collapse !important;
+                width: 100% !important;
+            }
+            th, td {
+                border: 1px solid #333 !important;
+                color: #000 !important;
+                background: transparent !important;
+            }
+            textarea, input {
+                border: none !important;
+                resize: none !important;
+                background: transparent !important;
+                color: #000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- 글로벌 헤더 -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- 로고 및 서비스명 -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showView('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <i data-lucide="file-spellcheck" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-tight text-slate-900 dark:text-white">Seattle English Academy 내신 준비</h1>
+                </div>
+            </div>
+
+            <!-- 우측 액션 버튼들 -->
+            <div class="flex items-center gap-2">
+                <button onclick="showView('home')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    <i data-lucide="home" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>메인으로</span>
+                </button>
+                
+                <!-- 다크모드 토글 -->
+                <button onclick="toggleDarkMode()" id="theme-toggle" class="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition" title="다크/라이트 모드 전환">
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                </button>
+
+                <!-- 백업 / 복원 -->
+                <button onclick="exportData()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    <i data-lucide="download" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>백업</span>
+                </button>
+                <button onclick="importData()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    <i data-lucide="upload" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>복원</span>
+                </button>
+                <input type="file" id="file-input" class="hidden" accept=".json" onchange="handleFileSelect(event)">
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. 메인 홈 화면 (부서 선택 메인 랜딩) -->
+    <section id="view-home" class="flex-1 flex flex-col justify-center items-center px-4 py-12">
+        <div class="max-w-4xl w-full text-center space-y-8">
+            
+            <!-- 타이틀 영역 -->
+            <div class="space-y-3">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    내신 대비 매니저
+                </h2>
+                <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-lg mx-auto">
+                    원하는 학년을 선택하여 학급별 기말고사 대비 교재, 수행평가 및 보충 학습 계획을 확인해보세요.
+                </p>
+            </div>
+
+            <!-- 부서 카드 영역 (중등부 / 고등부) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                
+                <!-- 중등부 카드 -->
+                <div onclick="openPrepView('middle')" class="group relative bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 cursor-pointer overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition"></div>
+                    
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                        <i data-lucide="sprout" class="w-6 h-6 text-emerald-600 dark:text-emerald-400"></i>
+                    </div>
+
+                    <div class="flex items-center gap-3 mb-2">
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition">중등부</h3>
+                        <span id="middle-count-badge" class="px-2.5 py-0.5 text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">3개 클래스</span>
+                    </div>
+
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 min-h-[40px]">
+                        중1, 중2, 중3 학교별 내신 기말고사 대비 교재/수행평가/보충교재 통합 관리
+                    </p>
+
+                    <div class="flex items-center justify-between text-sm font-semibold text-emerald-600 dark:text-emerald-400 pt-4 border-t border-slate-100 dark:border-slate-700/50">
+                        <span>시험대비표 작성 및 조회</span>
+                        <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition">
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 고등부 카드 -->
+                <div onclick="openPrepView('high')" class="group relative bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-blue-500 dark:hover:border-blue-500 rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 cursor-pointer overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition"></div>
+                    
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                        <i data-lucide="graduation-cap" class="w-6 h-6 text-blue-600 dark:text-blue-400"></i>
+                    </div>
+
+                    <div class="flex items-center gap-3 mb-2">
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition">고등부</h3>
+                        <span id="high-count-badge" class="px-2.5 py-0.5 text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-full">5개 클래스</span>
+                    </div>
+
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 min-h-[40px]">
+                        고1, 고2, 고3 등급 관리 및 학교별 내신 기말고사 기출·부교재 통합 관리
+                    </p>
+
+                    <div class="flex items-center justify-between text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-slate-100 dark:border-slate-700/50">
+                        <span>시험대비표 작성 및 조회</span>
+                        <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition">
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 2. 시험대비 계획표 상세 화면 -->
+    <main id="view-prep" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        
+        <!-- 상단 컨트롤 툴바 (no-print) -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm no-print">
+            
+            <!-- 탭 (고등부 / 중등부 전환) -->
+            <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-1">
+                <button id="tab-high" onclick="switchTab('high')" class="flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition">
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i> 고등부
+                </button>
+                <button id="tab-middle" onclick="switchTab('middle')" class="flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition">
+                    <i data-lucide="sprout" class="w-4 h-4"></i> 중등부
+                </button>
+            </div>
+
+            <!-- 작업 액션 버튼들 -->
+            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <button onclick="addRow()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> 학년/반 추가
+                </button>
+                <button onclick="window.print()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm">
+                    <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF
+                </button>
+                <button onclick="resetData()" class="flex items-center justify-center gap-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-rose-600 hover:text-white text-slate-700 dark:text-slate-200 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> 초기화
+                </button>
+                <span id="save-status" class="text-xs text-emerald-500 font-medium hidden flex items-center gap-1 ml-2">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i> 저장됨
+                </span>
+            </div>
+        </div>
+
+        <!-- 인쇄 헤더 (인쇄 시만 표출) -->
+        <div class="hidden print:block text-center mb-6">
+            <h1 id="print-title" class="text-2xl font-bold text-gray-900">기말고사 시험대비 계획표</h1>
+        </div>
+
+        <!-- 손글씨 양식 레이아웃 기반 표 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden print-container">
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse text-left">
+                    <thead>
+                        <tr class="bg-slate-100 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm">
+                            <!-- 헤더 셀 -->
+                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-44 sm:w-52 min-w-[170px] bg-slate-200/50 dark:bg-slate-950/40">
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="text-[11px] text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider">구분 / Date</span>
+                                    <span class="font-bold">대비 학년 및 반</span>
+                                </div>
+                            </th>
+                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <i data-lucide="book" class="w-4 h-4 text-blue-500 no-print"></i>
+                                    <span>교과서</span>
+                                </div>
+                            </th>
+                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-500 no-print"></i>
+                                    <span id="col-header-2">학력평가</span>
+                                </div>
+                            </th>
+                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <i data-lucide="layers" class="w-4 h-4 text-amber-500 no-print"></i>
+                                    <span id="col-header-3">보충교재</span>
+                                </div>
+                            </th>
+                            <th class="p-3 sm:p-4 w-1/4 min-w-[160px] text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <i data-lucide="more-horizontal" class="w-4 h-4 text-purple-500 no-print"></i>
+                                    <span>기타</span>
+                                </div>
+                            </th>
+                            <th class="p-2 w-10 no-print text-center"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-100">
+                        <!-- 동적으로 로드되는 테이블 데이터 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 하단 도움말 노티스 -->
+        <div class="p-4 bg-slate-800/40 border border-slate-700/60 rounded-xl text-xs text-slate-400 flex items-start gap-2.5 no-print">
+            <i data-lucide="help-circle" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+            <div class="space-y-1">
+                <p class="font-semibold text-slate-300">시험대비 표 활용 팁:</p>
+                <p>• **항목별 세부 완료 체크**: 입력 칸에 줄바꿈으로 여러 항목을 적으면 아래에 개별 체크박스가 생성되어 완료 여부를 구분할 수 있습니다.</p>
+                <p>• **중등부/고등부 맞춤 구분**: 중등부는 [교과서/평가문제집/개인문제집/기타], 고등부는 [교과서/학력평가/보충교재/기타] 항목으로 자동 변경됩니다.</p>
+                <p>• **영어 시험일 강조**: 영어 시험 날짜 입력 칸을 채우면 주황색 하이라이트 박스로 표시됩니다.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 스크립트 영역 -->
+    <script>
+        // 기본 데이터 세트
+        const defaultData = {
+            high: [
+                {
+                    grade: "고 1 (여고)",
+                    date: "12/11 ~ 12/15",
+                    engDate: "12/12(목)",
+                    textbook: "영어1 (비상 홍)\n1과~3과 본문",
+                    textbookDones: [false, false],
+                    assessment: "수행: 어휘 테스트\n어휘 프린트 1~30번",
+                    assessmentDones: [true, false],
+                    supplement: "2024 11월 모의고사\n지문 18-40번",
+                    supplementDones: [false, false],
+                    etc: "직전 보강: 12/10 오후 6시",
+                    etcDones: [false]
+                },
+                {
+                    grade: "고 1 (공립/남고)",
+                    date: "12/09 ~ 12/13",
+                    engDate: "12/10(화)",
+                    textbook: "영어1 (YBM 한)\n4과, 5과 본문",
+                    textbookDones: [true, true],
+                    assessment: "영작문 수행평가",
+                    assessmentDones: [true],
+                    supplement: "올림포스 독해의 기본 1\nUnit 01~05",
+                    supplementDones: [false, false],
+                    etc: "단어장 1~20강 추가",
+                    etcDones: [false]
+                }
+            ],
+            middle: [
+                {
+                    grade: "중 1",
+                    date: "12/16 ~ 12/18",
+                    engDate: "12/17(화)",
+                    textbook: "중학 영어1 (동아 윤)\n7과~8과 본문 암기",
+                    textbookDones: [false, false],
+                    assessment: "평가문제집 7과\n평가문제집 8과",
+                    assessmentDones: [true, false],
+                    supplement: "자공보 프린트 1~5번\n개인 오답노트 정리",
+                    supplementDones: [false, false],
+                    etc: "본문 구두시험 통과하기",
+                    etcDones: [false]
+                },
+                {
+                    grade: "중 2 (1반)",
+                    date: "12/11 ~ 12/13",
+                    engDate: "12/12(목)",
+                    textbook: "중학 영어2 (지학 민)\n5과, 6과 문법 정리",
+                    textbookDones: [false, false],
+                    assessment: "평가문제집 단원평가",
+                    assessmentDones: [true],
+                    supplement: "백점맞는 문법 2\n개인 문제집 50제",
+                    supplementDones: [false, false],
+                    etc: "주요 문법 개념 재시험",
+                    etcDones: [false]
+                }
+            ]
+        };
+
+        let currentTab = 'high';
+        let appData = JSON.parse(localStorage.getItem('testPrepData_v5')) || defaultData;
+
+        // 초기화 함수
+        window.onload = function() {
+            initTheme();
+            updateDashboardBadges();
+            lucide.createIcons();
+        };
+
+        // 다크 모드 토글 및 초기화
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // 대시보드 클래스 수 배지 업데이트
+        function updateDashboardBadges() {
+            const middleCount = appData.middle ? appData.middle.length : 0;
+            const highCount = appData.high ? appData.high.length : 0;
+            
+            document.getElementById('middle-count-badge').innerText = `${middleCount}개 클래스`;
+            document.getElementById('high-count-badge').innerText = `${highCount}개 클래스`;
+        }
+
+        // 화면 전환 (home vs prep)
+        function showView(viewName) {
+            const homeView = document.getElementById('view-home');
+            const prepView = document.getElementById('view-prep');
+
+            if (viewName === 'home') {
+                homeView.classList.remove('hidden');
+                prepView.classList.add('hidden');
+                updateDashboardBadges();
+            } else {
+                homeView.classList.add('hidden');
+                prepView.classList.remove('hidden');
+            }
+        }
+
+        // 대시보드 카드 클릭하여 상세 화면 진입
+        function openPrepView(tab) {
+            showView('prep');
+            switchTab(tab);
+        }
+
+        // 탭 전환 (고등부 / 중등부)
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            const tabHigh = document.getElementById('tab-high');
+            const tabMiddle = document.getElementById('tab-middle');
+            const printTitle = document.getElementById('print-title');
+            const colHeader2 = document.getElementById('col-header-2');
+            const colHeader3 = document.getElementById('col-header-3');
+
+            const activeClass = "bg-blue-600 text-white shadow-sm";
+            const inactiveClass = "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+
+            if (tab === 'high') {
+                tabHigh.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${activeClass}`;
+                tabMiddle.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${inactiveClass}`;
+                printTitle.innerText = "기말고사 시험대비 계획표 (고등부)";
+                colHeader2.innerText = "학력평가";
+                colHeader3.innerText = "보충교재";
+            } else {
+                tabMiddle.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${activeClass}`;
+                tabHigh.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${inactiveClass}`;
+                printTitle.innerText = "기말고사 시험대비 계획표 (중등부)";
+                colHeader2.innerText = "평가문제집";
+                colHeader3.innerText = "개인문제집";
+            }
+
+            renderTable();
+        }
+
+        // 테이블 동적 렌더링
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            const list = appData[currentTab] || [];
+
+            list.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-750/50 transition-colors group border-b border-slate-200 dark:border-slate-700/60";
+
+                const isMiddle = currentTab === 'middle';
+
+                tr.innerHTML = `
+                    <!-- 학년 구분 & Date & 영어 시험일 -->
+                    <td class="p-3 border-r border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/40 align-top">
+                        <div class="space-y-2">
+                            <input type="text" 
+                                   value="${escapeHtml(item.grade)}" 
+                                   onchange="updateCell(${index}, 'grade', this.value)"
+                                   placeholder="학년/반" 
+                                   class="w-full font-bold text-slate-900 dark:text-white bg-transparent border border-transparent hover:border-slate-400/50 dark:hover:border-slate-600 focus:border-blue-500 rounded px-2 py-1 text-sm sm:text-base focus:outline-none transition">
+                            
+                            <div class="space-y-1 px-1">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 shrink-0">전체시험:</span>
+                                    <input type="text" 
+                                           value="${escapeHtml(item.date || '')}" 
+                                           onchange="updateCell(${index}, 'date', this.value)"
+                                           placeholder="12/11~12/15" 
+                                           class="w-full text-xs text-slate-600 dark:text-slate-300 bg-transparent border border-transparent hover:border-slate-400/50 dark:hover:border-slate-600 focus:border-blue-500 rounded px-1 py-0.5 focus:outline-none transition">
+                                </div>
+                                
+                                <!-- 두드러진 영어 시험일 강조 박스 -->
+                                <div class="p-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg space-y-1 text-center">
+                                    <div class="flex items-center justify-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-[11px]">
+                                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                        <span>영어 시험일</span>
+                                    </div>
+                                    <input type="text" 
+                                           value="${escapeHtml(item.engDate || '')}" 
+                                           onchange="updateCell(${index}, 'engDate', this.value)"
+                                           placeholder="예: 12/12(목)" 
+                                           class="w-full text-xs font-semibold text-center text-amber-700 dark:text-amber-300 bg-transparent border border-amber-500/20 focus:border-amber-500 rounded px-1.5 py-0.5 focus:outline-none transition">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- 1. 교과서 -->
+                    ${renderMultiLineCell(index, 'textbook', item.textbook, item.textbookDones, '교과서 범위 (줄바꿈 구분)')}
+
+                    <!-- 2. 학력평가(고등) / 평가문제집(중등) -->
+                    ${renderMultiLineCell(index, 'assessment', item.assessment, item.assessmentDones, isMiddle ? '평가문제집 범위' : '학력평가/모의고사 범위')}
+
+                    <!-- 3. 보충교재(고등) / 개인문제집(중등) -->
+                    ${renderMultiLineCell(index, 'supplement', item.supplement, item.supplementDones, isMiddle ? '개인문제집/부교재' : '보충교재/워크북')}
+
+                    <!-- 4. 기타 -->
+                    ${renderMultiLineCell(index, 'etc', item.etc, item.etcDones, '수행평가, 기타')}
+
+                    <!-- 삭제 버튼 -->
+                    <td class="p-2 align-middle text-center no-print">
+                        <button onclick="deleteRow(${index})" title="학년/반 삭제" class="text-slate-400 hover:text-rose-500 p-1.5 rounded-lg hover:bg-rose-500/10 transition">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        // 줄바꿈 기반 개별 체크박스 생성 셀 HTML
+        function renderMultiLineCell(rowIndex, key, textValue, donesArray, placeholder) {
+            const lines = (textValue || '').split('\n').filter(line => line.trim() !== '');
+            const dones = donesArray || [];
+
+            let checkListHtml = '';
+            if (lines.length > 0) {
+                checkListHtml = `<div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700/60 space-y-1.5 no-print">`;
+                lines.forEach((line, lineIdx) => {
+                    const isChecked = dones[lineIdx] || false;
+                    checkListHtml += `
+                        <label class="flex items-start gap-1.5 text-xs cursor-pointer select-none group/item">
+                            <input type="checkbox" 
+                                   ${isChecked ? 'checked' : ''} 
+                                   onchange="toggleLineDone(${rowIndex}, '${key}', ${lineIdx}, this.checked)"
+                                   class="mt-0.5 w-3.5 h-3.5 text-emerald-600 rounded border-slate-300 dark:border-slate-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                            <span class="break-all transition ${isChecked ? 'line-through text-slate-400 dark:text-slate-500 font-normal' : 'text-slate-700 dark:text-slate-200 font-medium group-hover/item:text-blue-500'}">
+                                ${escapeHtml(line)}
+                            </span>
+                        </label>
+                    `;
+                });
+                checkListHtml += `</div>`;
+            }
+
+            return `
+                <td class="p-2.5 border-r border-slate-200 dark:border-slate-700 align-top relative">
+                    <textarea onchange="updateMultiLineText(${rowIndex}, '${key}', this.value)"
+                              placeholder="${placeholder}" 
+                              class="w-full h-20 text-xs sm:text-sm p-2 bg-transparent border border-transparent hover:border-slate-300 dark:hover:border-slate-700 focus:border-blue-500 rounded resize-y focus:outline-none transition leading-relaxed text-slate-800 dark:text-slate-100 font-sans">${escapeHtml(textValue)}</textarea>
+                    ${checkListHtml}
+                </td>
+            `;
+        }
+
+        // 텍스트 수정 시 줄 수 변경 감지
+        function updateMultiLineText(rowIndex, key, value) {
+            appData[currentTab][rowIndex][key] = value;
+            
+            // 줄 수에 따라 dones 배열 크기 조정
+            const lines = value.split('\n').filter(line => line.trim() !== '');
+            const keyDones = `${key}Dones`;
+            const currentDones = appData[currentTab][rowIndex][keyDones] || [];
+            
+            appData[currentTab][rowIndex][keyDones] = lines.map((_, idx) => currentDones[idx] || false);
+
+            autoSave();
+            renderTable();
+        }
+
+        // 개별 줄 체크여부 토글
+        function toggleLineDone(rowIndex, key, lineIdx, isChecked) {
+            const keyDones = `${key}Dones`;
+            if (!appData[currentTab][rowIndex][keyDones]) {
+                appData[currentTab][rowIndex][keyDones] = [];
+            }
+            appData[currentTab][rowIndex][keyDones][lineIdx] = isChecked;
+            autoSave();
+            renderTable();
+        }
+
+        // 일반 셀 업데이트
+        function updateCell(index, field, value) {
+            appData[currentTab][index][field] = value;
+            autoSave();
+        }
+
+        // 학년 추가
+        function addRow() {
+            appData[currentTab].push({
+                grade: currentTab === 'high' ? "고 (새 학급)" : "중 (새 학급)",
+                date: "",
+                engDate: "",
+                textbook: "",
+                textbookDones: [],
+                assessment: "",
+                assessmentDones: [],
+                supplement: "",
+                supplementDones: [],
+                etc: "",
+                etcDones: []
+            });
+            renderTable();
+            autoSave();
+        }
+
+        // 학년 삭제
+        function deleteRow(index) {
+            if (confirm("해당 학년/반 데이터를 삭제하시겠습니까?")) {
+                appData[currentTab].splice(index, 1);
+                renderTable();
+                autoSave();
+            }
+        }
+
+        // 자동 저장
+        function autoSave() {
+            localStorage.setItem('testPrepData_v5', JSON.stringify(appData));
+            showSaveStatus();
+        }
+
+        function showSaveStatus() {
+            const status = document.getElementById('save-status');
+            status.classList.remove('hidden');
+            setTimeout(() => {
+                status.classList.add('hidden');
+            }, 1500);
+        }
+
+        // 데이터 초기화
+        function resetData() {
+            if (confirm("모든 데이터를 초기화하시겠습니까?")) {
+                appData = JSON.parse(JSON.stringify(defaultData));
+                localStorage.setItem('testPrepData_v5', JSON.stringify(appData));
+                renderTable();
+                updateDashboardBadges();
+            }
+        }
+
+        // 데이터 백업 (JSON 다운로드)
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `기말고사_시험대비_계획표_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // 데이터 복원 (JSON 파일업로드)
+        function importData() {
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.high && imported.middle) {
+                        appData = imported;
+                        autoSave();
+                        renderTable();
+                        updateDashboardBadges();
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // HTML escaping
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
