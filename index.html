@@ -40,8 +40,8 @@
             font-family: 'Noto Sans KR', sans-serif;
         }
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
@@ -77,6 +77,13 @@
                 padding: 0 !important;
                 width: 100% !important;
             }
+            .desktop-table-view {
+                display: table !important;
+                width: 100% !important;
+            }
+            .mobile-card-view {
+                display: none !important;
+            }
             table {
                 border-collapse: collapse !important;
                 width: 100% !important;
@@ -95,34 +102,37 @@
         }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col transition-colors duration-200 antialiased">
 
     <!-- 글로벌 헤더 -->
-    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="showView('home')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <i data-lucide="file-spellcheck" class="w-6 h-6 text-white"></i>
+    <header class="border-b border-slate-800 bg-slate-950/90 backdrop-blur-md sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2.5 cursor-pointer" onclick="showView('home')">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
+                    <i data-lucide="file-spellcheck" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-none tracking-tight text-slate-900 dark:text-white">Seattle English Academy 내신 준비</h1>
+                    <h1 class="font-bold text-sm sm:text-lg leading-tight tracking-tight text-slate-900 dark:text-white line-clamp-1">
+                        Seattle English Prep
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-slate-400 font-medium hidden sm:block">내신 대비 관리 매니저</p>
                 </div>
             </div>
 
             <!-- 우측 연결 상태 및 액션 버튼 -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2">
                 <!-- 동기화 상태 인디케이터 -->
-                <div id="sync-status-badge" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                    <span class="w-2 h-2 rounded-full bg-slate-500"></span>
-                    <span id="sync-status-text">연결 확인 중...</span>
+                <div id="sync-status-badge" class="flex items-center gap-1.5 px-2 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                    <span class="w-2 h-2 rounded-full bg-slate-500 shrink-0"></span>
+                    <span id="sync-status-text" class="hidden md:inline">연결 확인 중...</span>
                 </div>
 
-                <button onclick="showView('home')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                <button onclick="showView('home')" class="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition active:scale-95">
                     <i data-lucide="home" class="w-3.5 h-3.5 text-amber-400"></i>
-                    <span>메인으로</span>
+                    <span class="hidden sm:inline">메인</span>
                 </button>
                 
-                <button onclick="toggleDarkMode()" id="theme-toggle" class="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition" title="다크/라이트 모드 전환">
+                <button onclick="toggleDarkMode()" id="theme-toggle" class="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition active:scale-95" title="다크/라이트 모드 전환">
                     <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
                     <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
                 </button>
@@ -141,56 +151,59 @@
     </header>
 
     <!-- 메인 홈 화면 -->
-    <section id="view-home" class="flex-1 flex flex-col justify-center items-center px-4 py-12">
-        <div class="max-w-4xl w-full text-center space-y-8">
-            <div class="space-y-3">
-                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+    <section id="view-home" class="flex-1 flex flex-col justify-center items-center px-4 py-8 sm:py-12">
+        <div class="max-w-4xl w-full text-center space-y-6 sm:space-y-8">
+            <div class="space-y-2 sm:space-y-3">
+                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 inline-block mb-1">
+                    스마트 내신 관리 시스템
+                </span>
+                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
                     내신 대비 매니저
                 </h2>
-                <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-lg mx-auto">
-                    원하는 학년을 선택하여 학급별 기말고사 대비 교재, 수행평가 및 보충 학습 계획을 확인해보세요.
+                <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-base max-w-lg mx-auto leading-relaxed">
+                    학급별 기말고사 대비 교재, 수행평가 및 보충 학습 계획을 모바일과 PC에서 한눈에 관리하세요.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-2 sm:pt-6">
                 <!-- 중등부 카드 -->
-                <div onclick="openPrepView('middle')" class="group relative bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 cursor-pointer overflow-hidden">
-                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition"></div>
-                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
-                        <i data-lucide="sprout" class="w-6 h-6 text-emerald-600 dark:text-emerald-400"></i>
-                    </div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition">중등부</h3>
+                <div onclick="openPrepView('middle')" class="group relative bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-2xl p-5 sm:p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/10 cursor-pointer overflow-hidden active:scale-[0.99]">
+                    <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition shrink-0">
+                            <i data-lucide="sprout" class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
                         <span id="middle-count-badge" class="px-2.5 py-0.5 text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">4개 클래스</span>
                     </div>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 min-h-[40px]">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition mb-1">중등부</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
                         중1, 중2, 중3 학교별 내신 기말고사 대비 교재/수행평가/보충교재 통합 관리
                     </p>
-                    <div class="flex items-center justify-between text-sm font-semibold text-emerald-600 dark:text-emerald-400 pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                        <span>시험대비표 작성 및 조회</span>
-                        <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition">
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <div class="flex items-center justify-between text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400 pt-3 border-t border-slate-100 dark:border-slate-700/50">
+                        <span>대비표 작성 및 조회</span>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition">
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- 고등부 카드 -->
-                <div onclick="openPrepView('high')" class="group relative bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-blue-500 dark:hover:border-blue-500 rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 cursor-pointer overflow-hidden">
-                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition"></div>
-                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition">
-                        <i data-lucide="graduation-cap" class="w-6 h-6 text-blue-600 dark:text-blue-400"></i>
-                    </div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <h3 class="text-2xl font-bold text-slate-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition">고등부</h3>
+                <div onclick="openPrepView('high')" class="group relative bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:border-blue-500 dark:hover:border-blue-500 rounded-2xl p-5 sm:p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/10 cursor-pointer overflow-hidden active:scale-[0.99]">
+                    <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition"></div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition shrink-0">
+                            <i data-lucide="graduation-cap" class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400"></i>
+                        </div>
                         <span id="high-count-badge" class="px-2.5 py-0.5 text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-full">4개 클래스</span>
                     </div>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 min-h-[40px]">
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition mb-1">고등부</h3>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
                         고1, 고2, 고3 등급 관리 및 학교별 내신 기말고사 기출·부교재 통합 관리
                     </p>
-                    <div class="flex items-center justify-between text-sm font-semibold text-blue-600 dark:text-blue-400 pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                        <span>시험대비표 작성 및 조회</span>
-                        <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition">
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <div class="flex items-center justify-between text-xs sm:text-sm font-semibold text-blue-600 dark:text-blue-400 pt-3 border-t border-slate-100 dark:border-slate-700/50">
+                        <span>대비표 작성 및 조회</span>
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition">
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                         </div>
                     </div>
                 </div>
@@ -199,29 +212,30 @@
     </section>
 
     <!-- 상세 화면 -->
-    <main id="view-prep" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm no-print">
-            <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-1">
-                <button id="tab-high" onclick="switchTab('high')" class="flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition">
+    <main id="view-prep" class="hidden flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+        <!-- 컨트롤 툴바 -->
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-slate-800/80 p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm no-print">
+            <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 p-1 w-full sm:w-auto">
+                <button id="tab-high" onclick="switchTab('high')" class="flex-1 sm:flex-initial justify-center flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition">
                     <i data-lucide="graduation-cap" class="w-4 h-4"></i> 고등부
                 </button>
-                <button id="tab-middle" onclick="switchTab('middle')" class="flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition">
+                <button id="tab-middle" onclick="switchTab('middle')" class="flex-1 sm:flex-initial justify-center flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition">
                     <i data-lucide="sprout" class="w-4 h-4"></i> 중등부
                 </button>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                <button onclick="addRow()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> 학년/반 추가
+            <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                <button onclick="addRow()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap active:scale-95">
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> 학년 추가
                 </button>
-                <button onclick="window.print()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium transition shadow-sm">
-                    <i data-lucide="printer" class="w-4 h-4"></i> 인쇄 / PDF
+                <button onclick="window.print()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap active:scale-95">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i> 인쇄
                 </button>
-                <button onclick="resetData()" class="flex items-center justify-center gap-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-rose-600 hover:text-white text-slate-700 dark:text-slate-200 px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition">
-                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> 초기화
+                <button onclick="resetData()" class="flex items-center justify-center gap-1 bg-slate-200 dark:bg-slate-700 hover:bg-rose-600 hover:text-white text-slate-700 dark:text-slate-200 px-2.5 py-2 rounded-lg text-xs font-medium transition whitespace-nowrap active:scale-95">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                 </button>
-                <span id="save-status" class="text-xs text-emerald-500 font-medium hidden flex items-center gap-1 ml-2">
-                    <i data-lucide="check" class="w-3.5 h-3.5"></i> 동기화됨
+                <span id="save-status" class="text-xs text-emerald-500 font-medium hidden flex items-center gap-1 whitespace-nowrap">
+                    <i data-lucide="check" class="w-3 h-3"></i> 동기화됨
                 </span>
             </div>
         </div>
@@ -230,36 +244,42 @@
             <h1 id="print-title" class="text-2xl font-bold text-gray-900">기말고사 시험대비 계획표</h1>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden print-container">
+        <!-- 카드 뷰 (모바일용 lg:hidden) -->
+        <div id="mobile-card-container" class="block lg:hidden space-y-4 mobile-card-view">
+            <!-- 자바스크립트로 다이나믹 카드 삽입 -->
+        </div>
+
+        <!-- 데스크톱 테이블 뷰 (lg:block) -->
+        <div class="hidden lg:block bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden print-container desktop-table-view">
             <div class="overflow-x-auto">
                 <table class="w-full border-collapse text-left">
                     <thead>
                         <tr class="bg-slate-100 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm">
-                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-44 sm:w-52 min-w-[170px] bg-slate-200/50 dark:bg-slate-950/40">
+                            <th class="p-3.5 border-r border-slate-200 dark:border-slate-700 w-52 min-w-[190px] bg-slate-200/50 dark:bg-slate-950/40">
                                 <div class="flex flex-col gap-0.5">
                                     <span class="text-[11px] text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider">구분 / Date</span>
                                     <span class="font-bold">대비 학년 및 반</span>
                                 </div>
                             </th>
-                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
+                            <th class="p-3.5 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <i data-lucide="book" class="w-4 h-4 text-blue-500 no-print"></i>
                                     <span>교과서</span>
                                 </div>
                             </th>
-                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
+                            <th class="p-3.5 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <i data-lucide="clipboard-check" class="w-4 h-4 text-emerald-500 no-print"></i>
-                                    <span id="col-header-2">학력평가</span>
+                                    <span class="col-header-2">학력평가</span>
                                 </div>
                             </th>
-                            <th class="p-3 sm:p-4 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
+                            <th class="p-3.5 border-r border-slate-200 dark:border-slate-700 w-1/4 min-w-[160px] text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <i data-lucide="layers" class="w-4 h-4 text-amber-500 no-print"></i>
-                                    <span id="col-header-3">보충교재</span>
+                                    <span class="col-header-3">보충교재</span>
                                 </div>
                             </th>
-                            <th class="p-3 sm:p-4 w-1/4 min-w-[160px] text-center">
+                            <th class="p-3.5 w-1/4 min-w-[160px] text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <i data-lucide="more-horizontal" class="w-4 h-4 text-purple-500 no-print"></i>
                                     <span>기타</span>
@@ -274,19 +294,19 @@
             </div>
         </div>
 
-        <div class="p-4 bg-slate-800/40 border border-slate-700/60 rounded-xl text-xs text-slate-400 flex items-start gap-2.5 no-print">
+        <div class="p-3.5 bg-slate-800/40 border border-slate-700/60 rounded-xl text-xs text-slate-400 flex items-start gap-2.5 no-print">
             <i data-lucide="help-circle" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
-            <div class="space-y-1">
+            <div class="space-y-1 leading-relaxed">
                 <p class="font-semibold text-slate-300">시험대비 표 활용 팁:</p>
-                <p>• **실시간 클라우드 공유**: Firebase에 실시간 연동되어 다른 사람이나 다른 기기에서 수정한 내용이 즉시 반영됩니다.</p>
-                <p>• **항목별 세부 완료 체크**: 입력 칸에 줄바꿈으로 여러 항목을 적으면 아래에 개별 체크박스가 생성됩니다.</p>
-                <p>• **영어 시험일 강조**: 영어 시험 날짜 입력 칸을 채우면 주황색 하이라이트 박스와 D-Day 표지가 자동 업데이트됩니다.</p>
+                <p>• <strong>모바일 지원</strong>: 스마트폰에서는 카드형 레이아웃으로 변경되어 간편하게 터치 관리할 수 있습니다.</p>
+                <p>• <strong>체크리스트 자동생성</strong>: 입력 칸에 줄바꿈(Enter)으로 항목을 적으면 하단에 체크박스가 자동 추가됩니다.</p>
+                <p>• <strong>영어 시험일 D-Day</strong>: 날짜를 입력하면 남은 날짜 D-Day 박스가 자동 계산됩니다.</p>
             </div>
         </div>
     </main>
 
     <script>
-        // 발급해주신 Firebase 설정 정보
+        // Firebase 설정 정보
         const firebaseConfig = {
             apiKey: "AIzaSyCEeDxWeHhnyLKDr2IKg3gEDKUVxY25ySc",
             authDomain: "seattle-english-prep.firebaseapp.com",
@@ -296,7 +316,6 @@
             appId: "1:343351040204:web:21650c96f31dd346ae0a69"
         };
 
-        // Firebase 초기화
         let db = null;
         let useFirebase = false;
 
@@ -308,7 +327,6 @@
             console.error("Firebase 초기화 실패 (로컬 모드로 전환):", err);
         }
 
-        // 최신 입력 데이터 기본 세트 (이미지 100% 반영)
         const initialData = {
             high: [
                 {
@@ -327,7 +345,7 @@
                 {
                     grade: "고 1 (점고)",
                     date: "12/03 ~",
-                    engDate: "12/",
+                    engDate: "12/05",
                     textbook: "3과\n4과",
                     textbookDones: [false, false],
                     assessment: "26년 10모\n변형문제",
@@ -340,7 +358,7 @@
                 {
                     grade: "고 2 (문창)",
                     date: "12/14-12/17",
-                    engDate: "예: 12/12(목)",
+                    engDate: "12/15",
                     textbook: "3과\n4과",
                     textbookDones: [false, false],
                     assessment: "26년 10모\n변형문제",
@@ -353,10 +371,10 @@
                 {
                     grade: "고 2 (함고)",
                     date: "12/03-12/8",
-                    engDate: "예: 12/12(목)",
+                    engDate: "12/04",
                     textbook: "Nothing",
                     textbookDones: [true],
-                    assessment: "26년 10모 18-40번(25,26,27,28 제외)\n변형문제",
+                    assessment: "26년 10모 18-40번\n변형문제",
                     assessmentDones: [true, false],
                     supplement: "Reading Power",
                     supplementDones: [false],
@@ -368,7 +386,7 @@
                 {
                     grade: "중 1 (점중)",
                     date: "12/08 ~ 12/11",
-                    engDate: "12/",
+                    engDate: "12/09",
                     textbook: "중학 영어1 (동아 윤)\n7과~8과 본문 암기",
                     textbookDones: [false, false],
                     assessment: "평가문제집 7과\n평가문제집 8과",
@@ -381,7 +399,7 @@
                 {
                     grade: "중 2 여중",
                     date: "12/01 ~ 12/4",
-                    engDate: "12/01(화)",
+                    engDate: "12/01",
                     textbook: "7과\n8과",
                     textbookDones: [false, false],
                     assessment: "평가문제집",
@@ -394,7 +412,7 @@
                 {
                     grade: "중 2 점중",
                     date: "12/08-12/11",
-                    engDate: "예: 12/12(목)",
+                    engDate: "12/10",
                     textbook: "7과\n8과",
                     textbookDones: [false, false],
                     assessment: "평가문제집",
@@ -407,7 +425,7 @@
                 {
                     grade: "중 3 여중",
                     date: "11/10",
-                    engDate: "11/10(화)",
+                    engDate: "11/10",
                     textbook: "7과\n8과(회화까지)",
                     textbookDones: [true, true],
                     assessment: "7과\n8과",
@@ -421,7 +439,7 @@
         };
 
         let currentTab = 'high';
-        let appData = JSON.parse(localStorage.getItem('testPrepData_v6')) || initialData;
+        let appData = JSON.parse(localStorage.getItem('testPrepData_v7')) || initialData;
 
         window.onload = function() {
             initTheme();
@@ -432,66 +450,63 @@
         function updateSyncBadge(status, text) {
             const badge = document.getElementById('sync-status-badge');
             const statusText = document.getElementById('sync-status-text');
-            statusText.innerText = text;
+            if (statusText) statusText.innerText = text;
 
             if (status === 'online') {
-                badge.className = "flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                badge.querySelector('span').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+                badge.className = "flex items-center gap-1.5 px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                badge.querySelector('span').className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0";
             } else if (status === 'syncing') {
-                badge.className = "flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20";
-                badge.querySelector('span').className = "w-2 h-2 rounded-full bg-blue-500 animate-ping";
+                badge.className = "flex items-center gap-1.5 px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20";
+                badge.querySelector('span').className = "w-2 h-2 rounded-full bg-blue-500 animate-ping shrink-0";
             } else {
-                badge.className = "flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
-                badge.querySelector('span').className = "w-2 h-2 rounded-full bg-amber-500";
+                badge.className = "flex items-center gap-1.5 px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                badge.querySelector('span').className = "w-2 h-2 rounded-full bg-amber-500 shrink-0";
             }
         }
 
-        // Firebase 실시간 리스너 동기화
         function initFirebaseSync() {
             if (!useFirebase || !db) {
-                updateSyncBadge('local', '로컬 전용 모드');
-                renderTable();
+                updateSyncBadge('local', '로컬 전용');
+                renderAllViews();
                 return;
             }
 
-            updateSyncBadge('syncing', '클라우드 연결 중...');
+            updateSyncBadge('syncing', '연결 중...');
 
             db.collection('examPrep').doc('mainData')
                 .onSnapshot((doc) => {
                     if (doc.exists) {
                         appData = doc.data();
-                        localStorage.setItem('testPrepData_v6', JSON.stringify(appData));
-                        updateSyncBadge('online', '실시간 동기화 완료');
+                        localStorage.setItem('testPrepData_v7', JSON.stringify(appData));
+                        updateSyncBadge('online', '실시간 동기화됨');
                     } else {
-                        // 최초 생성 시 초기 데이터로 저장
                         saveDataToCloud(initialData);
                         appData = initialData;
-                        updateSyncBadge('online', '실시간 데이터 생성됨');
+                        updateSyncBadge('online', '클라우드 생성 완료');
                     }
                     updateDashboardBadges();
-                    renderTable();
+                    renderAllViews();
                 }, (error) => {
                     console.error("Firestore 오류:", error);
-                    updateSyncBadge('local', '오프라인 / 로컬저장');
-                    renderTable();
+                    updateSyncBadge('local', '로컬 모드');
+                    renderAllViews();
                 });
         }
 
-        // 클라우드 저장
         function saveDataToCloud(dataToSave) {
             if (useFirebase && db) {
-                updateSyncBadge('syncing', '동기화 중...');
+                updateSyncBadge('syncing', '저장 중...');
                 db.collection('examPrep').doc('mainData').set(dataToSave)
                     .then(() => {
-                        updateSyncBadge('online', '실시간 동기화 완료');
+                        updateSyncBadge('online', '동기화 완료');
                         showSaveStatus();
                     })
                     .catch((error) => {
                         console.error("저장 실패:", error);
-                        updateSyncBadge('local', '로컬 저장됨 (오류)');
+                        updateSyncBadge('local', '로컬 저장됨');
                     });
             } else {
-                localStorage.setItem('testPrepData_v6', JSON.stringify(dataToSave));
+                localStorage.setItem('testPrepData_v7', JSON.stringify(dataToSave));
                 showSaveStatus();
             }
         }
@@ -548,40 +563,153 @@
             const tabHigh = document.getElementById('tab-high');
             const tabMiddle = document.getElementById('tab-middle');
             const printTitle = document.getElementById('print-title');
-            const colHeader2 = document.getElementById('col-header-2');
-            const colHeader3 = document.getElementById('col-header-3');
+            const colHeader2List = document.querySelectorAll('.col-header-2');
+            const colHeader3List = document.querySelectorAll('.col-header-3');
 
             const activeClass = "bg-blue-600 text-white shadow-sm";
             const inactiveClass = "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
 
             if (tab === 'high') {
-                tabHigh.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${activeClass}`;
-                tabMiddle.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${inactiveClass}`;
+                tabHigh.className = `flex-1 sm:flex-initial justify-center flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${activeClass}`;
+                tabMiddle.className = `flex-1 sm:flex-initial justify-center flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${inactiveClass}`;
                 printTitle.innerText = "기말고사 시험대비 계획표 (고등부)";
-                colHeader2.innerText = "학력평가";
-                colHeader3.innerText = "보충교재";
+                colHeader2List.forEach(el => el.innerText = "학력평가");
+                colHeader3List.forEach(el => el.innerText = "보충교재");
             } else {
-                tabMiddle.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${activeClass}`;
-                tabHigh.className = `flex items-center gap-2 px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${inactiveClass}`;
+                tabMiddle.className = `flex-1 sm:flex-initial justify-center flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${activeClass}`;
+                tabHigh.className = `flex-1 sm:flex-initial justify-center flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-semibold transition ${inactiveClass}`;
                 printTitle.innerText = "기말고사 시험대비 계획표 (중등부)";
-                colHeader2.innerText = "평가문제집";
-                colHeader3.innerText = "개인문제집";
+                colHeader2List.forEach(el => el.innerText = "평가문제집");
+                colHeader3List.forEach(el => el.innerText = "개인문제집");
             }
 
-            renderTable();
+            renderAllViews();
         }
 
-        function renderTable() {
+        function renderAllViews() {
+            renderDesktopTable();
+            renderMobileCards();
+            lucide.createIcons();
+        }
+
+        // 1. 모바일 카드 뷰 렌더링
+        function renderMobileCards() {
+            const container = document.getElementById('mobile-card-container');
+            container.innerHTML = '';
+
+            const list = appData[currentTab] || [];
+            const isMiddle = currentTab === 'middle';
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-slate-500 text-sm">등록된 학년/반이 없습니다. '학년 추가' 버튼을 눌러 추가하세요.</div>`;
+                return;
+            }
+
+            list.forEach((item, index) => {
+                const dDayBadge = calculateDDayBadge(item.engDate);
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-4";
+
+                card.innerHTML = `
+                    <!-- 카드 상단: 학년 및 삭제 -->
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60">
+                        <div class="flex-1 pr-2">
+                            <input type="text" 
+                                   value="${escapeHtml(item.grade)}" 
+                                   onchange="updateCell(${index}, 'grade', this.value)"
+                                   placeholder="학년/반 명칭" 
+                                   class="w-full font-bold text-base text-slate-900 dark:text-white bg-transparent border-b border-transparent focus:border-blue-500 focus:outline-none transition px-1 py-0.5">
+                        </div>
+                        <button onclick="deleteRow(${index})" title="삭제" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 transition shrink-0">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- 일시 및 D-Day -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                            <span class="text-[11px] font-semibold text-slate-400 block mb-1">전체 시험 기간</span>
+                            <input type="text" 
+                                   value="${escapeHtml(item.date || '')}" 
+                                   onchange="updateCell(${index}, 'date', this.value)"
+                                   placeholder="예: 12/11~12/15" 
+                                   class="w-full text-xs text-slate-800 dark:text-slate-200 bg-transparent focus:outline-none">
+                        </div>
+                        <div class="bg-amber-500/10 p-2.5 rounded-lg border border-amber-500/30">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400">영어 시험일</span>
+                                ${dDayBadge}
+                            </div>
+                            <input type="text" 
+                                   value="${escapeHtml(item.engDate || '')}" 
+                                   onchange="updateCell(${index}, 'engDate', this.value)"
+                                   placeholder="예: 12/12(목)" 
+                                   class="w-full text-xs font-semibold text-amber-800 dark:text-amber-300 bg-transparent focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- 항목별 리스트 -->
+                    <div class="space-y-3 pt-1">
+                        ${renderMobileCategorySection(index, 'textbook', '교과서', item.textbook, item.textbookDones, 'book', 'text-blue-500')}
+                        ${renderMobileCategorySection(index, 'assessment', isMiddle ? '평가문제집' : '학력평가', item.assessment, item.assessmentDones, 'clipboard-check', 'text-emerald-500')}
+                        ${renderMobileCategorySection(index, 'supplement', isMiddle ? '개인문제집' : '보충교재', item.supplement, item.supplementDones, 'layers', 'text-amber-500')}
+                        ${renderMobileCategorySection(index, 'etc', '기타 / 수행', item.etc, item.etcDones, 'more-horizontal', 'text-purple-500')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderMobileCategorySection(rowIndex, key, title, textValue, donesArray, icon, iconColor) {
+            const lines = (textValue || '').split('\n').filter(line => line.trim() !== '');
+            const dones = donesArray || [];
+
+            let checkListHtml = '';
+            if (lines.length > 0) {
+                checkListHtml = `<div class="mt-2 space-y-1.5 pl-1">`;
+                lines.forEach((line, lineIdx) => {
+                    const isChecked = dones[lineIdx] || false;
+                    checkListHtml += `
+                        <label class="flex items-start gap-2 text-xs cursor-pointer select-none">
+                            <input type="checkbox" 
+                                   ${isChecked ? 'checked' : ''} 
+                                   onchange="toggleLineDone(${rowIndex}, '${key}', ${lineIdx}, this.checked)"
+                                   class="mt-0.5 w-4 h-4 text-emerald-600 rounded border-slate-300 dark:border-slate-600 focus:ring-emerald-500 shrink-0">
+                            <span class="break-all ${isChecked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200 font-medium'}">
+                                ${escapeHtml(line)}
+                            </span>
+                        </label>
+                    `;
+                });
+                checkListHtml += `</div>`;
+            }
+
+            return `
+                <div class="bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                    <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        <i data-lucide="${icon}" class="w-3.5 h-3.5 ${iconColor}"></i>
+                        <span>${title}</span>
+                    </div>
+                    <textarea onchange="updateMultiLineText(${rowIndex}, '${key}', this.value)"
+                              placeholder="내용 입력 (줄바꿈 시 항목 분리)" 
+                              class="w-full text-xs p-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 focus:border-blue-500 rounded-lg resize-y focus:outline-none transition leading-relaxed min-h-[50px] font-sans">${escapeHtml(textValue)}</textarea>
+                    ${checkListHtml}
+                </div>
+            `;
+        }
+
+        // 2. 데스크톱 표 렌더링
+        function renderDesktopTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
 
             const list = appData[currentTab] || [];
+            const isMiddle = currentTab === 'middle';
 
             list.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.className = "group border-b border-slate-200 dark:border-slate-700/60";
 
-                const isMiddle = currentTab === 'middle';
                 const dDayBadge = calculateDDayBadge(item.engDate);
 
                 tr.innerHTML = `
@@ -619,10 +747,10 @@
                         </div>
                     </td>
 
-                    ${renderMultiLineCell(index, 'textbook', item.textbook, item.textbookDones, '교과서 범위 (줄바꿈 구분)')}
-                    ${renderMultiLineCell(index, 'assessment', item.assessment, item.assessmentDones, isMiddle ? '평가문제집 범위' : '학력평가/모의고사 범위')}
-                    ${renderMultiLineCell(index, 'supplement', item.supplement, item.supplementDones, isMiddle ? '개인문제집/부교재' : '보충교재/워크북')}
-                    ${renderMultiLineCell(index, 'etc', item.etc, item.etcDones, '수행평가, 기타')}
+                    ${renderMultiLineTableCell(index, 'textbook', item.textbook, item.textbookDones, '교과서 범위')}
+                    ${renderMultiLineTableCell(index, 'assessment', item.assessment, item.assessmentDones, isMiddle ? '평가문제집 범위' : '학력평가/모의고사 범위')}
+                    ${renderMultiLineTableCell(index, 'supplement', item.supplement, item.supplementDones, isMiddle ? '개인문제집/부교재' : '보충교재/워크북')}
+                    ${renderMultiLineTableCell(index, 'etc', item.etc, item.etcDones, '수행평가, 기타')}
 
                     <td class="p-2 align-middle text-center no-print">
                         <button onclick="deleteRow(${index})" title="학년/반 삭제" class="text-slate-400 hover:text-rose-500 p-1.5 rounded-lg hover:bg-rose-500/10 transition">
@@ -632,11 +760,9 @@
                 `;
                 tbody.appendChild(tr);
             });
-
-            lucide.createIcons();
         }
 
-        function renderMultiLineCell(rowIndex, key, textValue, donesArray, placeholder) {
+        function renderMultiLineTableCell(rowIndex, key, textValue, donesArray, placeholder) {
             const lines = (textValue || '').split('\n').filter(line => line.trim() !== '');
             const dones = donesArray || [];
 
@@ -680,7 +806,7 @@
             appData[currentTab][rowIndex][keyDones] = lines.map((_, idx) => currentDones[idx] || false);
 
             saveDataToCloud(appData);
-            renderTable();
+            renderAllViews();
         }
 
         function toggleLineDone(rowIndex, key, lineIdx, isChecked) {
@@ -690,7 +816,7 @@
             }
             appData[currentTab][rowIndex][keyDones][lineIdx] = isChecked;
             saveDataToCloud(appData);
-            renderTable();
+            renderAllViews();
         }
 
         function updateCell(index, field, value) {
@@ -712,31 +838,33 @@
                 etc: "",
                 etcDones: []
             });
-            renderTable();
+            renderAllViews();
             saveDataToCloud(appData);
         }
 
         function deleteRow(index) {
             if (confirm("해당 학년/반 데이터를 삭제하시겠습니까?")) {
                 appData[currentTab].splice(index, 1);
-                renderTable();
+                renderAllViews();
                 saveDataToCloud(appData);
             }
         }
 
         function showSaveStatus() {
             const status = document.getElementById('save-status');
-            status.classList.remove('hidden');
-            setTimeout(() => {
-                status.classList.add('hidden');
-            }, 1500);
+            if (status) {
+                status.classList.remove('hidden');
+                setTimeout(() => {
+                    status.classList.add('hidden');
+                }, 1500);
+            }
         }
 
         function resetData() {
             if (confirm("모든 데이터를 초기화하시겠습니까?")) {
                 appData = JSON.parse(JSON.stringify(initialData));
                 saveDataToCloud(appData);
-                renderTable();
+                renderAllViews();
                 updateDashboardBadges();
             }
         }
@@ -807,7 +935,7 @@
                     if (imported.high && imported.middle) {
                         appData = imported;
                         saveDataToCloud(appData);
-                        renderTable();
+                        renderAllViews();
                         updateDashboardBadges();
                     }
                 } catch (err) {
