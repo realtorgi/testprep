@@ -458,16 +458,18 @@
         
         // 데이터 불러오기 및 여중 3 명칭 강제 고정
         function loadAppData() {
-            let data = JSON.parse(localStorage.getItem('testPrepData_v12'));
-            if (!data) {
+            let data = JSON.parse(localStorage.getItem('testPrepData_v14'));
+            if (!data || !data.middle) {
                 data = JSON.parse(JSON.stringify(initialData));
             }
             
-            // 데이터 내 중3 학급 문구 강제 보정 (여중 3 이 빠지지 않도록 처리)
+            // 데이터 내 중3 학급 문구가 무조건 "🎉 💯 영어만점! 🏆 여중 3"을 포함하도록 강제 보정
             if (data && data.middle) {
-                const targetIdx = data.middle.findIndex(item => item.grade.includes('영어만점') || item.grade.includes('중 3'));
+                const targetIdx = data.middle.findIndex(m => m.grade && m.grade.includes('영어만점'));
                 if (targetIdx !== -1) {
                     data.middle[targetIdx].grade = "🎉 💯 영어만점! 🏆 여중 3";
+                } else {
+                    data.middle.unshift(initialData.middle[0]);
                 }
             }
             return data;
@@ -482,7 +484,7 @@
             switchTab('middle', false);
         };
 
-        // 중3 여중 위치에서 1초 간격으로 3번 폭죽 발사하는 함수
+        // 중3 여중 텍스트 위치에서 1초 간격으로 3번 폭죽 발사하는 함수
         function startMiddleConfetti() {
             let count = 0;
             const timer = setInterval(() => {
@@ -490,8 +492,8 @@
                 
                 if (typeof confetti === 'function') {
                     const targetElement = document.getElementById('target-middle-3');
-                    let originX = 0.5;
-                    let originY = 0.3;
+                    let originX = 0.25;
+                    let originY = 0.25;
 
                     if (targetElement) {
                         const rect = targetElement.getBoundingClientRect();
@@ -503,13 +505,13 @@
 
                     try {
                         confetti({
-                            particleCount: 50,
-                            spread: 70,
+                            particleCount: 70,
+                            spread: 80,
                             origin: { x: originX, y: originY },
                             colors: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'],
-                            ticks: 120,
+                            ticks: 140,
                             gravity: 0.8,
-                            scalar: 0.9,
+                            scalar: 1.0,
                             disableForReducedMotion: true
                         });
                     } catch (e) {
@@ -554,12 +556,12 @@
                     if (doc.exists) {
                         appData = doc.data();
                         if (appData && appData.middle) {
-                            const targetIdx = appData.middle.findIndex(item => item.grade.includes('영어만점') || item.grade.includes('중 3'));
+                            const targetIdx = appData.middle.findIndex(m => m.grade && m.grade.includes('영어만점'));
                             if (targetIdx !== -1) {
                                 appData.middle[targetIdx].grade = "🎉 💯 영어만점! 🏆 여중 3";
                             }
                         }
-                        localStorage.setItem('testPrepData_v12', JSON.stringify(appData));
+                        localStorage.setItem('testPrepData_v14', JSON.stringify(appData));
                         updateSyncBadge('online', '실시간 동기화됨');
                     } else {
                         saveDataToCloud(initialData);
@@ -588,7 +590,7 @@
                         updateSyncBadge('local', '로컬 저장됨');
                     });
             } else {
-                localStorage.setItem('testPrepData_v12', JSON.stringify(dataToSave));
+                localStorage.setItem('testPrepData_v14', JSON.stringify(dataToSave));
                 showSaveStatus();
             }
         }
@@ -679,7 +681,7 @@
             lucide.createIcons();
         }
 
-        // 1. 모바일 카드 뷰 렌더링 (모든 학년 동일한 색상 적용)
+        // 1. 모바일 카드 뷰 렌더링
         function renderMobileCards() {
             const container = document.getElementById('mobile-card-container');
             container.innerHTML = '';
@@ -694,14 +696,14 @@
 
             list.forEach((item, index) => {
                 const dDayBadge = calculateDDayBadge(item.engDate);
-                const isTargetRow = item.grade.includes('중 3');
+                const isPerfect = item.grade.includes('영어만점');
                 const card = document.createElement('div');
                 card.className = `bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-4 relative overflow-hidden`;
 
                 card.innerHTML = `
                     <!-- 카드 상단: 학년 및 삭제 -->
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60">
-                        <div class="flex-1 pr-2 flex items-center gap-1.5" ${isTargetRow ? 'id="target-middle-3"' : ''}>
+                        <div class="flex-1 pr-2 flex items-center gap-1.5" ${isPerfect ? 'id="target-middle-3"' : ''}>
                             <input type="text" 
                                    value="${escapeHtml(item.grade)}" 
                                    onchange="updateCell(${index}, 'grade', this.value)"
@@ -748,6 +750,7 @@
             });
         }
 
+        // 모바일 카테고리 세션 렌더링 함수 추가
         function renderMobileCategorySection(rowIndex, key, title, textValue, donesArray, icon, iconColor) {
             const lines = (textValue || '').split('\n').filter(line => line.trim() !== '');
             const dones = donesArray || [];
@@ -786,7 +789,7 @@
             `;
         }
 
-        // 2. 데스크톱 표 렌더링 (모든 학년 동일한 기본 스타일 적용)
+        // 2. 데스크톱 표 렌더링
         function renderDesktopTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -799,12 +802,12 @@
                 tr.className = `group border-b border-slate-200 dark:border-slate-700/60`;
 
                 const dDayBadge = calculateDDayBadge(item.engDate);
-                const isTargetRow = item.grade.includes('중 3');
+                const isPerfect = item.grade.includes('영어만점');
 
                 tr.innerHTML = `
                     <td class="p-3 border-r border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/40 align-top">
                         <div class="space-y-2">
-                            <div class="flex items-center gap-1" ${isTargetRow ? 'id="target-middle-3"' : ''}>
+                            <div class="flex items-center gap-1" ${isPerfect ? 'id="target-middle-3"' : ''}>
                                 <input type="text" 
                                        value="${escapeHtml(item.grade)}" 
                                        onchange="updateCell(${index}, 'grade', this.value)"
