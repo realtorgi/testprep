@@ -28,7 +28,7 @@
     </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Canvas Confetti Library for localized particle animations -->
+    <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <!-- Noto Sans KR Font -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -175,11 +175,11 @@
                         <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition shrink-0">
                             <i data-lucide="sprout" class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400"></i>
                         </div>
-                        <span id="middle-count-badge" class="px-2.5 py-0.5 text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">4개 클래스</span>
+                        <span id="middle-count-badge" class="px-2.5 py-0.5 text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">5개 클래스</span>
                     </div>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition mb-1">중등부</h3>
                     <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
-                        중1, 중2, 중3 학교별 내신 기말고사 대비 교재/수행평가/보충교재 통합 관리
+                        중1, 중2(여중2-1/여중2-2/점중), 중3 학교별 내신 기말고사 대비 교재/수행평가/보충교재 통합 관리
                     </p>
                     <div class="flex items-center justify-between text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400 pt-3 border-t border-slate-100 dark:border-slate-700/50">
                         <span>대비표 작성 및 조회</span>
@@ -233,7 +233,7 @@
                 <button onclick="window.print()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap active:scale-95">
                     <i data-lucide="printer" class="w-3.5 h-3.5"></i> 인쇄
                 </button>
-                <button onclick="resetData()" class="flex items-center justify-center gap-1 bg-slate-200 dark:bg-slate-700 hover:bg-rose-600 hover:text-white text-slate-700 dark:text-slate-200 px-2.5 py-2 rounded-lg text-xs font-medium transition whitespace-nowrap active:scale-95">
+                <button onclick="resetData()" class="flex items-center justify-center gap-1 bg-slate-200 dark:bg-slate-700 hover:bg-rose-600 hover:text-white text-slate-700 dark:text-slate-200 px-2.5 py-2 rounded-lg text-xs font-medium transition whitespace-nowrap active:scale-95" title="초기 데이터 복원">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                 </button>
                 <span id="save-status" class="text-xs text-emerald-500 font-medium hidden flex items-center gap-1 whitespace-nowrap">
@@ -248,7 +248,7 @@
 
         <!-- 카드 뷰 (모바일용 lg:hidden) -->
         <div id="mobile-card-container" class="block lg:hidden space-y-4 mobile-card-view">
-            <!-- 자바스크립트로 다이나믹 카드 삽입 -->
+            <!-- 다이나믹 카드 삽입 -->
         </div>
 
         <!-- 데스크톱 테이블 뷰 (lg:block) -->
@@ -329,6 +329,7 @@
             console.error("Firebase 초기화 실패 (로컬 모드로 전환):", err);
         }
 
+        // 기본 초기데이터 정의
         const initialData = {
             high: [
                 {
@@ -386,6 +387,19 @@
             ],
             middle: [
                 {
+                    grade: "🎉 💯 영어만점! 🏆 여중 3",
+                    date: "11/10-11/13",
+                    engDate: "11/10(화)",
+                    textbook: "7과\n8과(회화까지)",
+                    textbookDones: [true, true],
+                    assessment: "평가문제집7\n평가문제집8",
+                    assessmentDones: [true, true],
+                    supplement: "내신콘서트\n백발백중\n올백",
+                    supplementDones: [true, true, true],
+                    etc: "프린트\n인터넷문제\n(21-24년)4년치 여중3 기말 기출문제\n25년 final 여중 3 기말 기출문제",
+                    etcDones: [true, true, true, true]
+                },
+                {
                     grade: "중 1 (점중)",
                     date: "12/08 ~ 12/11",
                     engDate: "12/09",
@@ -399,7 +413,20 @@
                     etcDones: [false]
                 },
                 {
-                    grade: "중 2 여중",
+                    grade: "여중 2-1반",
+                    date: "12/01 ~ 12/4",
+                    engDate: "12/01",
+                    textbook: "7과\n8과",
+                    textbookDones: [false, false],
+                    assessment: "평가문제집",
+                    assessmentDones: [false],
+                    supplement: "내신콘서트\n백발백중\n열공",
+                    supplementDones: [false, false, false],
+                    etc: "프린트",
+                    etcDones: [false]
+                },
+                {
+                    grade: "여중 2-2반",
                     date: "12/01 ~ 12/4",
                     engDate: "12/01",
                     textbook: "7과\n8과",
@@ -423,37 +450,78 @@
                     supplementDones: [false, false, false],
                     etc: "프린트",
                     etcDones: [false]
-                },
-                {
-                    grade: "🎉 💯 영어만점! 🏆 중 3 여중",
-                    date: "11/10-11/13",
-                    engDate: "11/10(화)",
-                    textbook: "7과\n8과(회화까지)",
-                    textbookDones: [true, true],
-                    assessment: "평가문제집7\n평가문제집8",
-                    assessmentDones: [true, true],
-                    supplement: "내신콘서트\n백발백중\n올백",
-                    supplementDones: [true, true, true],
-                    etc: "프린트\n인터넷문제\n(21-24년)4년치 여중3 기말 기출문제\n25년 final 여중 3 기말 기출문제",
-                    etcDones: [true, true, true, true]
                 }
             ]
         };
 
         let currentTab = 'middle';
-        let appData = JSON.parse(localStorage.getItem('testPrepData_v7')) || initialData;
-
-        // 중3 여중 데이터 최신 축하 정보로 갱신 (이미 로컬에 저장되어 있더라도 업데이트)
-        if (appData.middle && appData.middle.length > 3) {
-            appData.middle[3] = initialData.middle[3];
+        
+        // 데이터 불러오기 및 여중 3 명칭 강제 고정
+        function loadAppData() {
+            let data = JSON.parse(localStorage.getItem('testPrepData_v12'));
+            if (!data) {
+                data = JSON.parse(JSON.stringify(initialData));
+            }
+            
+            // 데이터 내 중3 학급 문구 강제 보정 (여중 3 이 빠지지 않도록 처리)
+            if (data && data.middle) {
+                const targetIdx = data.middle.findIndex(item => item.grade.includes('영어만점') || item.grade.includes('중 3'));
+                if (targetIdx !== -1) {
+                    data.middle[targetIdx].grade = "🎉 💯 영어만점! 🏆 여중 3";
+                }
+            }
+            return data;
         }
+
+        let appData = loadAppData();
 
         window.onload = function() {
             initTheme();
             updateDashboardBadges();
             initFirebaseSync();
-            switchTab('middle');
+            switchTab('middle', false);
         };
+
+        // 중3 여중 위치에서 1초 간격으로 3번 폭죽 발사하는 함수
+        function startMiddleConfetti() {
+            let count = 0;
+            const timer = setInterval(() => {
+                count++;
+                
+                if (typeof confetti === 'function') {
+                    const targetElement = document.getElementById('target-middle-3');
+                    let originX = 0.5;
+                    let originY = 0.3;
+
+                    if (targetElement) {
+                        const rect = targetElement.getBoundingClientRect();
+                        if (rect.width > 0 && rect.height > 0) {
+                            originX = (rect.left + rect.width / 2) / window.innerWidth;
+                            originY = (rect.top + rect.height / 2) / window.innerHeight;
+                        }
+                    }
+
+                    try {
+                        confetti({
+                            particleCount: 50,
+                            spread: 70,
+                            origin: { x: originX, y: originY },
+                            colors: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'],
+                            ticks: 120,
+                            gravity: 0.8,
+                            scalar: 0.9,
+                            disableForReducedMotion: true
+                        });
+                    } catch (e) {
+                        console.warn('Confetti execution error:', e);
+                    }
+                }
+
+                if (count >= 3) {
+                    clearInterval(timer);
+                }
+            }, 1000);
+        }
 
         function updateSyncBadge(status, text) {
             const badge = document.getElementById('sync-status-badge');
@@ -485,11 +553,13 @@
                 .onSnapshot((doc) => {
                     if (doc.exists) {
                         appData = doc.data();
-                        // 중3 여중 부분 업데이트 보장
-                        if(appData.middle && appData.middle[3]) {
-                            appData.middle[3].grade = "🎉 💯 영어만점! 🏆 중 3 여중";
+                        if (appData && appData.middle) {
+                            const targetIdx = appData.middle.findIndex(item => item.grade.includes('영어만점') || item.grade.includes('중 3'));
+                            if (targetIdx !== -1) {
+                                appData.middle[targetIdx].grade = "🎉 💯 영어만점! 🏆 여중 3";
+                            }
                         }
-                        localStorage.setItem('testPrepData_v7', JSON.stringify(appData));
+                        localStorage.setItem('testPrepData_v12', JSON.stringify(appData));
                         updateSyncBadge('online', '실시간 동기화됨');
                     } else {
                         saveDataToCloud(initialData);
@@ -518,7 +588,7 @@
                         updateSyncBadge('local', '로컬 저장됨');
                     });
             } else {
-                localStorage.setItem('testPrepData_v7', JSON.stringify(dataToSave));
+                localStorage.setItem('testPrepData_v12', JSON.stringify(dataToSave));
                 showSaveStatus();
             }
         }
@@ -566,10 +636,10 @@
 
         function openPrepView(tab) {
             showView('prep');
-            switchTab(tab);
+            switchTab(tab, true); // 학급 대비표 진입 시 폭죽 발사 가능
         }
 
-        function switchTab(tab) {
+        function switchTab(tab, shouldFireConfetti = true) {
             currentTab = tab;
             
             const tabHigh = document.getElementById('tab-high');
@@ -593,6 +663,11 @@
                 printTitle.innerText = "기말고사 시험대비 계획표 (중등부)";
                 colHeader2List.forEach(el => el.innerText = "평가문제집");
                 colHeader3List.forEach(el => el.innerText = "개인문제집");
+                
+                // 중등부 선택 클릭시에만 1초 간격 3번 폭죽 발사
+                if (shouldFireConfetti) {
+                    startMiddleConfetti();
+                }
             }
 
             renderAllViews();
@@ -602,37 +677,9 @@
             renderDesktopTable();
             renderMobileCards();
             lucide.createIcons();
-            triggerLocalConfetti();
         }
 
-        // 중3 여중 위치에서만 국소적으로 폭죽 터뜨리는 함수
-        function triggerLocalConfetti() {
-            if (currentTab !== 'middle') return;
-
-            const targets = document.querySelectorAll('.party-target');
-            if (targets.length === 0) return;
-
-            targets.forEach(target => {
-                const rect = target.getBoundingClientRect();
-                if (rect.width === 0 || rect.height === 0) return;
-
-                const x = (rect.left + rect.width / 2) / window.innerWidth;
-                const y = (rect.top + rect.height / 2) / window.innerHeight;
-
-                confetti({
-                    particleCount: 35,
-                    spread: 60,
-                    origin: { x: x, y: y },
-                    colors: ['#f59e0b', '#ec4899', '#3b82f6', '#10b981', '#8b5cf6'],
-                    ticks: 120,
-                    gravity: 0.8,
-                    scalar: 0.85,
-                    disableForReducedMotion: true
-                });
-            });
-        }
-
-        // 1. 모바일 카드 뷰 렌더링
+        // 1. 모바일 카드 뷰 렌더링 (모든 학년 동일한 색상 적용)
         function renderMobileCards() {
             const container = document.getElementById('mobile-card-container');
             container.innerHTML = '';
@@ -647,21 +694,19 @@
 
             list.forEach((item, index) => {
                 const dDayBadge = calculateDDayBadge(item.engDate);
-                const isPerfect = item.grade.includes('영어만점');
+                const isTargetRow = item.grade.includes('중 3');
                 const card = document.createElement('div');
-                card.className = `bg-white dark:bg-slate-800 rounded-xl p-4 border ${isPerfect ? 'border-amber-500/50 shadow-lg shadow-amber-500/10' : 'border-slate-200 dark:border-slate-700/80'} shadow-sm space-y-4 relative overflow-hidden`;
-
-                const partyClass = isPerfect ? 'party-target' : '';
+                card.className = `bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-4 relative overflow-hidden`;
 
                 card.innerHTML = `
                     <!-- 카드 상단: 학년 및 삭제 -->
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60">
-                        <div class="flex-1 pr-2 flex items-center gap-1.5 ${partyClass}">
+                        <div class="flex-1 pr-2 flex items-center gap-1.5" ${isTargetRow ? 'id="target-middle-3"' : ''}>
                             <input type="text" 
                                    value="${escapeHtml(item.grade)}" 
                                    onchange="updateCell(${index}, 'grade', this.value)"
                                    placeholder="학년/반 명칭" 
-                                   class="w-full font-bold text-base ${isPerfect ? 'text-amber-500 dark:text-amber-400 font-extrabold' : 'text-slate-900 dark:text-white'} bg-transparent border-b border-transparent focus:border-blue-500 focus:outline-none transition px-1 py-0.5">
+                                   class="w-full font-bold text-base text-slate-900 dark:text-white bg-transparent border-b border-transparent focus:border-blue-500 focus:outline-none transition px-1 py-0.5">
                         </div>
                         <button onclick="deleteRow(${index})" title="삭제" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-rose-500/10 transition shrink-0">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -741,7 +786,7 @@
             `;
         }
 
-        // 2. 데스크톱 표 렌더링
+        // 2. 데스크톱 표 렌더링 (모든 학년 동일한 기본 스타일 적용)
         function renderDesktopTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -751,21 +796,20 @@
 
             list.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                const isPerfect = item.grade.includes('영어만점');
-                tr.className = `group border-b border-slate-200 dark:border-slate-700/60 ${isPerfect ? 'bg-amber-500/5' : ''}`;
+                tr.className = `group border-b border-slate-200 dark:border-slate-700/60`;
 
                 const dDayBadge = calculateDDayBadge(item.engDate);
-                const partyClass = isPerfect ? 'party-target' : '';
+                const isTargetRow = item.grade.includes('중 3');
 
                 tr.innerHTML = `
                     <td class="p-3 border-r border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-900/40 align-top">
                         <div class="space-y-2">
-                            <div class="flex items-center gap-1 ${partyClass}">
+                            <div class="flex items-center gap-1" ${isTargetRow ? 'id="target-middle-3"' : ''}>
                                 <input type="text" 
                                        value="${escapeHtml(item.grade)}" 
                                        onchange="updateCell(${index}, 'grade', this.value)"
                                        placeholder="학년/반" 
-                                       class="w-full font-bold ${isPerfect ? 'text-amber-500 dark:text-amber-400 font-extrabold' : 'text-slate-900 dark:text-white'} bg-transparent border border-transparent hover:border-slate-400/50 dark:hover:border-slate-600 focus:border-blue-500 rounded px-2 py-1 text-sm sm:text-base focus:outline-none transition">
+                                       class="w-full font-bold text-slate-900 dark:text-white bg-transparent border border-transparent hover:border-slate-400/50 dark:hover:border-slate-600 focus:border-blue-500 rounded px-2 py-1 text-sm sm:text-base focus:outline-none transition">
                             </div>
                             
                             <div class="space-y-1 px-1">
