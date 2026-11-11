@@ -179,7 +179,7 @@
                     </div>
                     <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition mb-1">중등부</h3>
                     <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
-                        중1, 중2(여중2-1/여중2-2/점중), 중3 학교별 내신 기말고사 대비 교재/수행평가/보충교재 통합 관리
+                        중1, 중2, 중3 학교별 내신 기말고사 대비 교재/수행평가/보충교재 통합 관리
                     </p>
                     <div class="flex items-center justify-between text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400 pt-3 border-t border-slate-100 dark:border-slate-700/50">
                         <span>대비표 작성 및 조회</span>
@@ -227,8 +227,8 @@
             </div>
 
             <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-                <button onclick="addRow()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap active:scale-95">
-                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> 학년 추가
+                <button onclick="addNewClassPrompt()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap active:scale-95">
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> 새 학급/반 추가
                 </button>
                 <button onclick="window.print()" class="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition shadow-sm whitespace-nowrap active:scale-95">
                     <i data-lucide="printer" class="w-3.5 h-3.5"></i> 인쇄
@@ -387,19 +387,6 @@
             ],
             middle: [
                 {
-                    grade: "🎉 💯 영어만점! 🏆 여중 3",
-                    date: "11/10-11/13",
-                    engDate: "11/10(화)",
-                    textbook: "7과\n8과(회화까지)",
-                    textbookDones: [true, true],
-                    assessment: "평가문제집7\n평가문제집8",
-                    assessmentDones: [true, true],
-                    supplement: "내신콘서트\n백발백중\n올백",
-                    supplementDones: [true, true, true],
-                    etc: "프린트\n인터넷문제\n(21-24년)4년치 여중3 기말 기출문제\n25년 final 여중 3 기말 기출문제",
-                    etcDones: [true, true, true, true]
-                },
-                {
                     grade: "중 1 (점중)",
                     date: "12/08 ~ 12/11",
                     engDate: "12/09",
@@ -413,26 +400,26 @@
                     etcDones: [false]
                 },
                 {
-                    grade: "여중 2-1반",
+                    grade: "중 2 여중 1반",
                     date: "12/01 ~ 12/4",
-                    engDate: "12/01",
+                    engDate: "12/01(목)",
                     textbook: "7과\n8과",
                     textbookDones: [false, false],
-                    assessment: "평가문제집",
-                    assessmentDones: [false],
+                    assessment: "평가문제집7\n평가문제집8",
+                    assessmentDones: [true, false],
                     supplement: "내신콘서트\n백발백중\n열공",
                     supplementDones: [false, false, false],
                     etc: "프린트",
                     etcDones: [false]
                 },
                 {
-                    grade: "여중 2-2반",
+                    grade: "중 2 여중 2반",
                     date: "12/01 ~ 12/4",
-                    engDate: "12/01",
+                    engDate: "12/01(목)",
                     textbook: "7과\n8과",
                     textbookDones: [false, false],
-                    assessment: "평가문제집",
-                    assessmentDones: [false],
+                    assessment: "평가문제집7\n평가문제집8",
+                    assessmentDones: [true, false],
                     supplement: "내신콘서트\n백발백중\n열공",
                     supplementDones: [false, false, false],
                     etc: "프린트",
@@ -450,26 +437,57 @@
                     supplementDones: [false, false, false],
                     etc: "프린트",
                     etcDones: [false]
+                },
+                {
+                    grade: "중3 여중 🎉 💯 영어만점! 🏆",
+                    date: "11/10-11/13",
+                    engDate: "11/10(화)",
+                    textbook: "7과\n8과(회화까지)",
+                    textbookDones: [true, true],
+                    assessment: "평가문제집7\n평가문제집8",
+                    assessmentDones: [true, true],
+                    supplement: "내신콘서트\n백발백중\n올백",
+                    supplementDones: [true, true, true],
+                    etc: "프린트\n인터넷문제\n(21-24년)4년치 여중3 기말 기출문제\n25년 final 여중 3 기말 기출문제",
+                    etcDones: [true, true, true, true]
                 }
             ]
         };
 
         let currentTab = 'middle';
         
-        // 데이터 불러오기 및 여중 3 명칭 강제 고정
+        // 데이터 불러오기 및 고정 데이터 보정 (중3 무조건 맨 아래로 강제 이동)
         function loadAppData() {
-            let data = JSON.parse(localStorage.getItem('testPrepData_v14'));
+            let data = JSON.parse(localStorage.getItem('testPrepData_v20'));
             if (!data || !data.middle) {
                 data = JSON.parse(JSON.stringify(initialData));
             }
             
-            // 데이터 내 중3 학급 문구가 무조건 "🎉 💯 영어만점! 🏆 여중 3"을 포함하도록 강제 보정
             if (data && data.middle) {
+                // 기존 표기 일괄 정리 및 변경
+                data.middle.forEach(m => {
+                    if (m.grade === '여중 2-1반' || m.grade === '중 2 여중') m.grade = '중 2 여중 1반';
+                    if (m.grade === '여중 2-2반') m.grade = '중 2 여중 2반';
+                });
+
+                // 중 2 여중 2반이 없을 경우 1반 복사해서 생성
+                const hasClass1 = data.middle.some(m => m.grade === '중 2 여중 1반');
+                const hasClass2 = data.middle.some(m => m.grade === '중 2 여중 2반');
+
+                if (hasClass1 && !hasClass2) {
+                    const class1Obj = data.middle.find(m => m.grade === '중 2 여중 1반');
+                    const idx1 = data.middle.indexOf(class1Obj);
+                    const class2Obj = JSON.parse(JSON.stringify(class1Obj));
+                    class2Obj.grade = '중 2 여중 2반';
+                    data.middle.splice(idx1 + 1, 0, class2Obj);
+                }
+
+                // 중3 폭죽 학급을 찾아서 무조건 배열의 맨 끝(최하단)으로 이동
                 const targetIdx = data.middle.findIndex(m => m.grade && m.grade.includes('영어만점'));
                 if (targetIdx !== -1) {
-                    data.middle[targetIdx].grade = "🎉 💯 영어만점! 🏆 여중 3";
-                } else {
-                    data.middle.unshift(initialData.middle[0]);
+                    const perfectObj = data.middle.splice(targetIdx, 1)[0];
+                    perfectObj.grade = "중3 여중 🎉 💯 영어만점! 🏆";
+                    data.middle.push(perfectObj);
                 }
             }
             return data;
@@ -556,12 +574,20 @@
                     if (doc.exists) {
                         appData = doc.data();
                         if (appData && appData.middle) {
+                            appData.middle.forEach(m => {
+                                if (m.grade === '여중 2-1반' || m.grade === '중 2 여중') m.grade = '중 2 여중 1반';
+                                if (m.grade === '여중 2-2반') m.grade = '중 2 여중 2반';
+                            });
+
+                            // 중3 폭죽 학급을 무조건 맨 아래로 이동
                             const targetIdx = appData.middle.findIndex(m => m.grade && m.grade.includes('영어만점'));
                             if (targetIdx !== -1) {
-                                appData.middle[targetIdx].grade = "🎉 💯 영어만점! 🏆 여중 3";
+                                const perfectObj = appData.middle.splice(targetIdx, 1)[0];
+                                perfectObj.grade = "중3 여중 🎉 💯 영어만점! 🏆";
+                                appData.middle.push(perfectObj);
                             }
                         }
-                        localStorage.setItem('testPrepData_v14', JSON.stringify(appData));
+                        localStorage.setItem('testPrepData_v20', JSON.stringify(appData));
                         updateSyncBadge('online', '실시간 동기화됨');
                     } else {
                         saveDataToCloud(initialData);
@@ -590,7 +616,7 @@
                         updateSyncBadge('local', '로컬 저장됨');
                     });
             } else {
-                localStorage.setItem('testPrepData_v14', JSON.stringify(dataToSave));
+                localStorage.setItem('testPrepData_v16', JSON.stringify(dataToSave));
                 showSaveStatus();
             }
         }
@@ -918,22 +944,33 @@
             saveDataToCloud(appData);
         }
 
+        // 새 학급 대화상자로 추가하기
+        function addNewClassPrompt() {
+            const defaultName = currentTab === 'high' ? "고1 (새 학급)" : "중 2 (새 학급)";
+            const className = prompt("추가할 학급/반 이름을 입력하세요:", defaultName);
+            
+            if (className !== null && className.trim() !== "") {
+                appData[currentTab].push({
+                    grade: className.trim(),
+                    date: "",
+                    engDate: "",
+                    textbook: "",
+                    textbookDones: [],
+                    assessment: "",
+                    assessmentDones: [],
+                    supplement: "",
+                    supplementDones: [],
+                    etc: "",
+                    etcDones: []
+                });
+                renderAllViews();
+                saveDataToCloud(appData);
+                updateDashboardBadges();
+            }
+        }
+
         function addRow() {
-            appData[currentTab].push({
-                grade: currentTab === 'high' ? "고 (새 학급)" : "중 (새 학급)",
-                date: "",
-                engDate: "",
-                textbook: "",
-                textbookDones: [],
-                assessment: "",
-                assessmentDones: [],
-                supplement: "",
-                supplementDones: [],
-                etc: "",
-                etcDones: []
-            });
-            renderAllViews();
-            saveDataToCloud(appData);
+            addNewClassPrompt();
         }
 
         function deleteRow(index) {
